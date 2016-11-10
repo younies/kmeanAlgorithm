@@ -22,7 +22,29 @@ def eclidieanDistance(X1, X2):
 
 ##input data
 
-path_to_inputData = "/Users/youniesmahmoud/Documents/Fall2016/datamining/hw2/AD_modified/AD_200_no_class_info.arff"
+path_to_inputData = "/Users/youniesmahmoud/Documents/Fall2016/datamining/hw2/AD_modified/AD_completed_no_class.arff"
+path_to_SVM_Data = "/Users/youniesmahmoud/Documents/Fall2016/datamining/hw2/AD_modified/svm_names.txt"
+
+svmData = open(path_to_SVM_Data)
+DataSVM = svmData.read()
+DataSVM = DataSVM.split("\n")
+DataSVM = DataSVM[0:-1]
+
+for i in range(len(DataSVM)):
+	m = re.search(r'-?[0-9]+.[0-9]*', DataSVM[i])
+	#print (m.group(0))
+	#print (i)
+	#print(DataSVM[i])
+	m = float(m.group(0))
+	DataSVM[i] = (abs(m), i , DataSVM[i])
+
+DataSVM.sort(reverse = True)
+
+DataSVM = DataSVM[0:200]
+
+
+for svm in DataSVM:
+	print(svm[2])
 
 inputData = open(path_to_inputData)
 Data = inputData.read()
@@ -34,13 +56,20 @@ for i in range(len(Data)):
 	#print(len(Data[i]))
 	for j in range(len(Data[i])):
 		Data[i][j] = float(Data[i][j].strip())
-	Data[i] = numpy.array(Data[i])
+	#Data[i] = numpy.array(Data[i]) we will return here
+	NewData = []
+	for svm in DataSVM:
+		#print(svm)
+		NewData.append( Data[i][svm[1]])
+
+	Data[i] = numpy.array(NewData)
 
 
-
+print(len(Data))
+print(len(Data[0]))
 
 ##initialize the parameter 
-K = 4 #number of clusters
+K = 2 #number of clusters
 NFeatures = len(Data[0])
 N = len(Data)
 centroids = Data[0:K] # choose random data points as kmeans
@@ -103,6 +132,7 @@ def getXis(newClusters):
 
 
 while True:
+	print ("g")
 	newCs = []
 	for Xi in Data:
 		newCs.append(assignCluster(Xi))
@@ -130,6 +160,13 @@ for i in range(K):
 for result in results:
 	print(result)
 print(numpy.mean(results , axis = 0))
+
+
+
+
+
+
+
 
 
 
